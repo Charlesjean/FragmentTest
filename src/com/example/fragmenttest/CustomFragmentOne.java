@@ -2,8 +2,13 @@ package com.example.fragmenttest;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.StateSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +78,10 @@ public class CustomFragmentOne extends Fragment {
 			mContainer = inflater.inflate(R.layout.main_menu, null);
 		TextView text = new TextView(this.getActivity());
 		text.setText("Fragment 1");
-		LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(250,80);
+        text.setClickable(true);
+        this.addStateDrawable(text);
+        this.addColorState(text);
+		LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
 		layout.setMargins(100, 100, 0, 50);
 		text.setLayoutParams(layout);
 
@@ -93,4 +101,32 @@ public class CustomFragmentOne extends Fragment {
 		Log.i(this.getClass().getName(), "onResume");
 		super.onResume();
 	}
+
+    /*
+    *Add statedrawable for targetView to display different drawable when
+    * view is in different state
+     */
+    public void addStateDrawable(View targetView)
+    {
+        StateListDrawable listDrawable = new StateListDrawable();
+        //add drawable used when view is pressed
+        listDrawable.addState(new int[]{android.R.attr.state_pressed}, new ColorDrawable(Color.rgb(106,170,234)));
+        //show gray background for all other state
+        listDrawable.addState(StateSet.WILD_CARD, new ColorDrawable(Color.GRAY));
+        targetView.setBackgroundDrawable(listDrawable);
+
+    }
+
+    /**
+     * set different text color for different state
+     */
+    public void addColorState(TextView targetView)
+    {
+        int[][] states = {
+                new int[]{android.R.attr.state_pressed},
+                StateSet.WILD_CARD};
+        int[] colors = {Color.RED, Color.BLACK};
+        ColorStateList coloList = new ColorStateList(states, colors);
+        targetView.setTextColor(coloList);
+    }
 }
